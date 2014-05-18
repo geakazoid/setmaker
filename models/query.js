@@ -2,7 +2,8 @@ var sqlite3 = require("sqlite3");
 var async = require("async");
 
 var database_filename = "db/questions-matthew.db";
-
+var db = new sqlite3.Database(database_filename, sqlite3.OPEN_READONLY);
+//db.on('trace', function(text) {console.log(text);});
 
 // Carefully taken from:
 // http://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -68,7 +69,7 @@ function choose_n_random_ids(list, n, constraints, callback)
     }); //end shuffle
 }
 
-function select_questions (distribution, constraints, callback) {
+exports.select_questions = function select_questions (distribution, constraints, callback) {
     async.concat(distribution, function (each_type, callback) {
         if (each_type.count > 0) {
             retrieve_question_info(each_type.type, constraints, function retrieve_callback(err, list) {
@@ -88,37 +89,3 @@ function select_questions (distribution, constraints, callback) {
         }
     });
 }
-
-var db = new sqlite3.Database(database_filename, sqlite3.OPEN_READONLY);
-//db.on('trace', function(text) {console.log(text);});
-var setspec = [
-      { type: "A", count: 4 },
-      { type: "G", count: 11 },
-      { type: "Q", count: 1 },
-      { type: "R", count: 1 },
-      { type: "S", count: 1 },
-      { type: "V", count: 1 },
-      { type: "X", count: 1 }];
-
-var constraints =
-    {
-        shuffle: true,
-        chapters: [12, 13, 14]
-    }
-
-select_questions(setspec, constraints, function(err, questionlist) {
-    for (var i = 0; i < questionlist.length; i++) {
-        var q = questionlist[i];
-        console.log(q.type + " " + (i+1) + ": " + q.question);
-        if (q.startverse == q.endverse) {
-            console.log("  A: " + q.answer + " (" + q.book + " " 
-                + q.chapter + ":" + q.startverse + ")\n");            
-        } else {
-            console.log("  A: " + q.answer + " (" + q.book + " " 
-                + q.chapter + ":" + q.startverse + "-" 
-                + q.endverse + ")\n");            
-        }
-     }; 
-});
-
-db.close();
