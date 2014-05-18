@@ -1,7 +1,7 @@
 var sqlite3 = require("sqlite3");
 var async = require("async");
 
-var database_filename = "questions-matthew.db";
+var database_filename = "db/questions-matthew.db";
 
 
 // Carefully taken from:
