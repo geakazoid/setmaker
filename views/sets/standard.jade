@@ -1,0 +1,10 @@
+block content
+  h1= title
+  - for (var i = 0; i < questions.length; i++)
+      - var q = questions[i]
+      div(style='float: left; width: 35px;')
+          | #{q.type}
+      div(style='float: left; width: 90%; white-space:pre; margin-bottom: 15px;')
+          | #{i+1}. #{q.question}
+          | A. #{q.answer}
+      div(style='clear: left;')
