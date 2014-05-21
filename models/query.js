@@ -2,7 +2,7 @@ var sqlite3 = require("sqlite3");
 var async = require("async");
 
 var database_filename = "db/questions-matthew.db";
-var db = new sqlite3.Database(database_filename, sqlite3.OPEN_READONLY);
+var db = new sqlite3.Database(database_filename, sqlite3);
 //db.on('trace', function(text) {console.log(text);});
 
 // Carefully taken from:
@@ -28,6 +28,14 @@ function shuffle(array, callback) {
   callback(null, array);
 }
  
+function get_question_by_id(id, callback) {
+    var query_by_id = "select * from questions where id=?";
+    db.get(query_by_id, id, function db_id_callback(err, row) {
+        if (err) throw err;
+        callback(null, row);
+    });
+}
+
 function retrieve_question_info(type, constraints, callback) {
     var query_by_type = "select * from questions where type=?";
     var array_of_args = [type];
@@ -87,5 +95,19 @@ exports.select_questions = function select_questions (distribution, constraints,
                 callback(null, shuffled_list);
             });
         }
+    });
+}
+
+exports.get_question_uses = function get_question_uses(id, callback) {
+    get_question_by_id(id, function(err, qinfo) {
+        callback(null, qinfo.uses);
+    })
+}
+
+exports.increment_question_uses = function increment_question_uses(id, callback) {
+    var inc_uses = "update questions set uses = uses + 1 where id=?";
+    db.run(inc_uses, id, function db_uses_inc_callback(err, row) {
+        if (err) throw err;
+        callback(null);
     });
 }

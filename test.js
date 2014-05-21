@@ -16,7 +16,7 @@ var constraints =
         chapters: [12, 13, 14]
     }
 
-query.select_questions(setspec, constraints, function(err, questionlist) {
+/* query.select_questions(setspec, constraints, function(err, questionlist) {
     for (var i = 0; i < questionlist.length; i++) {
         var q = questionlist[i];
         console.log(q.type + " " + (i+1) + ": " + q.question);
@@ -29,4 +29,16 @@ query.select_questions(setspec, constraints, function(err, questionlist) {
                 + q.endverse + ")\n");            
         }
      }; 
+}); */
+
+var idnum = 123;
+
+query.get_question_uses(idnum, function(err, uses) {
+  console.log("Question " + idnum + " has been used " + uses + " times.");
+  query.increment_question_uses(idnum, function(err) {
+    console.log("Incrementing usage...");
+    query.get_question_uses(idnum, function(err, uses) {
+      console.log("Question " + idnum + " now has been used " + uses + " times.");
+    })
+  });
 });
