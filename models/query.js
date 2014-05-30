@@ -104,10 +104,18 @@ exports.get_question_uses = function get_question_uses(id, callback) {
     })
 }
 
-exports.increment_question_uses = function increment_question_uses(id, callback) {
+exports.increment_single_question_uses = function increment_single_question_uses(id, callback) {
     var inc_uses = "update questions set uses = uses + 1 where id=?";
     db.run(inc_uses, id, function db_uses_inc_callback(err, row) {
         if (err) throw err;
         callback(null);
+    });
+}
+
+exports.increment_list_question_uses = function increment_list_question_uses(idlist, callback) {
+    async.forEach(idlist, function(item, callback) {
+        exports.increment_single_question_uses(item, function(err) {
+            callback();
+        });
     });
 }
