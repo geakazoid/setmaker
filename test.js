@@ -33,12 +33,24 @@ var constraints =
 
 var idnum = 123;
 
+var idlist = [12, 13, 14];
+
+/*
 query.get_question_uses(idnum, function(err, uses) {
   console.log("Question " + idnum + " has been used " + uses + " times.");
-  query.increment_question_uses(idnum, function(err) {
+  query.increment_single_question_uses(idnum, function(err) {
     console.log("Incrementing usage...");
     query.get_question_uses(idnum, function(err, uses) {
       console.log("Question " + idnum + " now has been used " + uses + " times.");
     })
   });
+}); */
+
+query.increment_list_question_uses(idlist, function(err) {
+  async.forEach(idlist, function (item, callback) { 
+    query.get_question_uses(idnum, function(err, uses) {
+      console.log("Question " + idnum + " now has been used " + uses + " times.");
+      callback(); // tell async that the iterator has completed
+    }, function(err) {});
+  });  
 });
