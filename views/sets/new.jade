@@ -1,0 +1,108 @@
+extends ../layout
+
+block content
+  h1= title
+  form(action='/sets/create', method='post')
+    div.label
+      label Quizzing Year:
+    div.inputs
+      select(name='year')
+        option 2013-14
+    div.label
+      label Level: 
+    div.inputs
+      select(name='level')
+        option Basic
+        option District
+        option Regional
+    div.label
+      label Set Title:
+    div.inputs
+      input(type='text', name='set_title' style='width: 200px;')
+    div.label
+      label Question Order:
+    div.inputs
+      select(name='question_order')
+        option Random
+        option Sequential
+    div.label
+      label Number of Sets:
+    div.inputs
+      input(type='text', name='num_sets' value='1' style='width: 50px;')
+    div.label
+      label Book / Chapter Selection:
+    div.inputs
+      div
+        span Matthew  
+        a (select all)
+        br
+        - for (var i = 1; i <= num_chapters; i++)
+          div.chapter
+            input(type='checkbox', id='#{book}_#{i}', name='#{book}[]' value='#{i}', checked=false)
+            label(for='#{book}_#{i}')  #{i}
+          if i % 10 === 0
+            br
+    div.label
+      label Question Types:
+    div.inputs 
+      for qt in qts
+        div
+          div.question_type
+            input(type='checkbox', id='qt_#{qt["type"]}', name='qt_#{qt["type"]}', checked=false)
+            label(for='qt_#{qt["type"]}')  #{qt['label']} (#{qt['total']})
+          div.question_count
+            input(type='text', name='num_#{qt["type"]}' value="#{qt['count']}" style='width: 30px;')
+    div.label
+      label Delivery Type:
+    div.inputs 
+      input(type='checkbox', name='dt_doc', checked=false)
+      label  Microsoft Word (.doc) 
+      br
+      input(type='checkbox', name='dt_docx', checked=false)
+      label  Microsoft Word (.docx) 
+      br
+      input(type='checkbox', name='dt_rtf', checked=false)
+      label  Rich Text (.rtf) 
+      br
+      input(type='checkbox', name='dt_xls', checked=false)
+      label  Microsoft Excel (.xls) 
+      br
+      input(type='checkbox', name='dt_xlsx', checked=false)
+      label  Microsoft Excel (.xlsx) 
+      br
+      input(type='checkbox', name='dt_csv', checked=false)
+      label  Text, Comma Delimited (.csv) 
+      br
+      input(type='checkbox', name='dt_txt', checked=false)
+      label  Text, Tab Delimited (.txt) 
+      br
+      input(type='checkbox', name='dt_html', checked=false)
+      label  HTML5 (.html) 
+      br
+      input(type='checkbox', name='dt_xml', checked=false)
+      label  XML (.xml) 
+      br
+      input(type='checkbox', name='dt_json', checked=false)
+      label  JSON (.json) 
+    div.label
+      label Tie Breaker Sets:
+    div.inputs
+      select(name='num_tiebreaker_sets')
+        option 0
+        option 1
+        option 2
+        option 3
+        option 4
+    div.label
+      label Tie Breaker / Replacement Sets:
+    div.inputs
+      select(name='num_replacement_sets')
+        option 0
+        option 1
+        option 2
+        option 3
+    div(class='note')
+      span (Note, if selecting more than one delivery type all files will be zipped for delivery.)
+    div(class='submit')
+      input(type='submit' name='submit' value='Submit')
+      input(type='button' name='reset' value='Reset')
