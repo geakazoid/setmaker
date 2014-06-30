@@ -98,6 +98,16 @@ exports.select_questions = function select_questions (distribution, constraints,
     });
 }
 
+exports.get_question_counts_by_type = function get_question_counts_by_type (typelist, constraints, callback) {
+    async.concat(typelist, function (each_type, callback) {
+        retrieve_question_info(each_type, constraints, function retrieve_callback(err, list) {
+            callback(null, {type: each_type, count: list.length});
+        });
+    }, function(err, counts) {
+        callback(null, counts);
+    });
+}
+
 exports.get_question_uses = function get_question_uses(id, callback) {
     get_question_by_id(id, function(err, qinfo) {
         callback(null, qinfo.uses);
