@@ -28,8 +28,19 @@ function shuffle(array, callback) {
   callback(null, array);
 }
  
+function database_query_to_array(query, column, callback) {
+    db.all(query, function (err, result) {
+        if (err) throw err;
+        async.concat(result, function (each_entry, callback) {
+            callback(null, each_entry[column]);
+        }, function(err, list) {
+            callback(null, list);
+        });
+    });
+}
+
 function get_question_by_id(id, callback) {
-    var query_by_id = "select * from questions where id=?";
+    var query_by_id = "select * from matthew where id=?";
     db.get(query_by_id, id, function db_id_callback(err, row) {
         if (err) throw err;
         callback(null, row);
@@ -37,7 +48,7 @@ function get_question_by_id(id, callback) {
 }
 
 function retrieve_question_info(type, constraints, callback) {
-    var query_by_type = "select * from questions where type=?";
+    var query_by_type = "select * from matthew where type=?";
     var array_of_args = [type];
     if (constraints.chapters.length != 0)
     {
@@ -115,7 +126,7 @@ exports.get_question_uses = function get_question_uses(id, callback) {
 }
 
 exports.increment_single_question_uses = function increment_single_question_uses(id, callback) {
-    var inc_uses = "update questions set uses = uses + 1 where id=?";
+    var inc_uses = "update matthew set uses = uses + 1 where id=?";
     db.run(inc_uses, id, function db_uses_inc_callback(err, row) {
         if (err) throw err;
         callback(null);
@@ -127,5 +138,42 @@ exports.increment_list_question_uses = function increment_list_question_uses(idl
         exports.increment_single_question_uses(item, function(err) {
             callback();
         });
+    });
+}
+
+exports.get_books_in_table = function get_books_in_table(tableid, callback) {
+    var query_books = "select book from " + tableid + " group by book";
+    database_query_to_array(query_books, "book", function(err, list) {
+        if (err) throw err;
+        callback(null, list);
+    });
+}
+
+exports.get_max_chapter_for_book = function get_max_chapter_for_book(tableid, book, callback) {
+    var query_max = "select max(chapter) as maxchap from " + tableid + " where book = '" + book + "'";
+    db.get(query_max, function (err, result) {
+        if (err) throw err;
+        callback(null, result.maxchap);
+    });
+}
+
+exports.get_max_chapter_by_table = function get_max_chapter_by_table(tableid, callback) {
+    exports.get_books_in_table(tableid, function (err, booklist) {
+        async.concat(booklist, function (item, callback) {
+            exports.get_max_chapter_for_book(tableid, item, function (err, maxchap) {
+                if (err) throw err;
+                callback(null, {book:item, count:maxchap});
+            });
+        }, function(err, maxchapters) {
+            callback(null, maxchapters);
+        }); 
+    });
+}
+
+exports.get_active_books = function get_active_books(callback) {
+    var query_books = "select name from books where active='true'";
+    database_query_to_array(query_books, "name", function(err, list) {
+        if (err) throw err;
+        callback(null, list);
     });
 }

@@ -4,7 +4,7 @@ block content
   h1= title
   form(action='/sets/create', method='post')
     div.label
-      label Quizzing Year:
+      label Book:
     div.inputs
       select(name='year')
         option 2013-14
@@ -32,16 +32,17 @@ block content
     div.label
       label Book / Chapter Selection:
     div.inputs
-      div
-        span Matthew  
-        a (select all)
-        br
-        - for (var i = 1; i <= num_chapters; i++)
-          div.chapter
-            input(type='checkbox', id='#{book}_#{i}', name='#{book}[]' value='#{i}', checked=false)
-            label(for='#{book}_#{i}')  #{i}
-          if i % 10 === 0
-            br
+      - for book in bks
+        div
+          span #{book.book}  
+          a (select all)
+          br
+          - for (var i = 1; i <= book.count; i++)
+            div.chapter
+              input(type='checkbox', id='#{book["book"]}_#{i}', name='#{book["book"]}[#{i}]' value='#{i}', checked=false)
+              label(for='#{book["book"]}_#{i}')  #{i}
+            if i % 10 === 0
+              br
     div.label
       label Question Types:
     div.inputs 

@@ -19,12 +19,12 @@ router.get('/new', function(req, res) {
 	                      {label: "Verse",        type: "v", total: "94",  count: "1"},
 	                      {label: "Context",      type: "x", total: "69",  count: "1"}];
 	var book = "matthew";
-    var num_chapters = 28;
 
-	res.render('sets/new', { title: 'Create A Set',
-		                        qts: question_types,
-		                        book: book,
-		                        num_chapters: num_chapters });
+    query.get_max_chapter_by_table(book, function(err, books) {
+		res.render('sets/new', { title: 'Create A Set',
+			                        qts: question_types,
+			                        bks: books });    	
+    })
 });
 
 // POST form values to create new set(s)
@@ -53,8 +53,8 @@ router.post('/create', function(req, res) {
 	// check question order
 	if (req.body.question_order === 'Sequential') { shuffle = false }
 	// check chapters
-	if (typeof req.body.matthew !== 'undefined') { chapters = req.body.matthew }
-	
+	if (typeof req.body.Matthew !== 'undefined') { chapters = req.body.Matthew }
+
 	// set specification for standard question set
 	var setspec = [
 	      { type: "A", count: num_a },
